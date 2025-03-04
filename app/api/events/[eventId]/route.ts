@@ -5,7 +5,7 @@ interface RequestParams {
 	eventId: string;
 }
 
-export const GET = async (request: Request, {params}: {params: RequestParams}) =>
+export const GET = async (_: Request, {params}: {params: RequestParams}) =>
 {
 	const {eventId} = params;
 
