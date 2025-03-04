@@ -11,6 +11,7 @@ import {SortableItem} from "@/components/SortableItem";
 import {Button, Title} from "@/styles/styles";
 import {observer} from "mobx-react";
 import predictor from "@/lib/predictor";
+import {restrictToVerticalAxis} from "@dnd-kit/modifiers";
 
 const List = styled.div`
   display: flex;
@@ -47,7 +48,7 @@ const QualificationRankingPage = observer(({}) => {
 
 	return <div>
 		<Title>How will the qualifications end?</Title>
-		<DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+		<DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd} modifiers={[restrictToVerticalAxis]}>
 			<SortableContext items={rankings.map((team) => team.team_number)} strategy={verticalListSortingStrategy}>
 				<List>
 					{rankings.map((team, index) => (
