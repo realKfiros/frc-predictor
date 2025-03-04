@@ -1,15 +1,12 @@
-import {TBA} from "@/lib/apis";
-import {use} from "react";
-
-const getEventName = async (eventId: string) => {
-	const eventData = await TBA(`event/${eventId}`);
-	return eventData.name;
-}
+"use client";
+import useSWR from "swr";
+import {fetcher} from "@/lib/utilities";
 
 interface EventNameProps {
 	eventId: string;
 }
 
 export const EventName = ({ eventId }: EventNameProps) => {
-	return use(getEventName(eventId));
+	const {data} = useSWR(`/api/events/${eventId}`, fetcher);
+	return data?.name;
 }

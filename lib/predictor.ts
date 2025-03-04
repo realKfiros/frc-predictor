@@ -1,6 +1,5 @@
-import {action, autorun, makeAutoObservable, makeObservable, observable} from "mobx";
+import {action, autorun, makeObservable, observable} from "mobx";
 import {Team} from "@/interfaces/team";
-import {Statbotics, TBA} from "@/lib/apis";
 
 class Predictor
 {
