@@ -2,12 +2,12 @@ import {NextResponse} from "next/server";
 import {Statbotics, TBA} from "@/lib/apis";
 
 interface RequestParams {
-	eventId: string;
+	params: Promise<{eventId: string}>
 }
 
-export const GET = async (_: Request, {params}: {params: RequestParams}) =>
+export const GET = async (_: Request, {params}: RequestParams) =>
 {
-	const {eventId} = params;
+	const {eventId} = await params;
 
 	const event = await Statbotics(`event/${eventId}`);
 
