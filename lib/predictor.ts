@@ -38,34 +38,31 @@ class Predictor
 	}
 
 	pickTeam(team: Team, autoAssign = false) {
-		if (this.pickIndex > 24)
+		if (this.pickIndex > 23)
 			return;
 
 		this.rankings = this.rankings.filter((t) => t.team_number !== team.team_number);
 
-		console.log(this.pickIndex, team.team_number);
-
-		if (this.pickIndex < 16)
-		{
-			if (autoAssign)
-			{
+		if (this.pickIndex > 15) {
+			const allianceIndex = this.alliances.findLastIndex((a) => a.length === 2);
+			this.alliances[allianceIndex].push(team);
+			this.pickIndex++;
+		} else {
+			if (this.pickIndex === 15) {
+				this.alliances[7].push(team);
+				this.pickIndex++;
+			}
+			else if (autoAssign) {
 				const allianceIndex = this.alliances.findIndex((a) => a.length === 0);
 				this.alliances[allianceIndex].push(team);
 				this.pickIndex++;
 			}
-			else
-			{
+			else {
 				const allianceIndex = this.alliances.findIndex((a) => a.length === 1);
 				this.alliances[allianceIndex].push(team);
 				this.pickIndex++;
 				this.pickTeam(this.rankings[0], true);
 			}
-		}
-		else
-		{
-			const allianceIndex = this.alliances.findLastIndex((a) => a.length === 2);
-			this.alliances[allianceIndex].push(team);
-			this.pickIndex++;
 		}
 	}
 }
