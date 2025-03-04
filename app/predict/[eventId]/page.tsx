@@ -29,7 +29,7 @@ const QualificationRankingPage = observer(({}) => {
 	useEffect(() => {
 		if (!data)
 			return;
-		predictor.rankings = data.teams.sort((a: Team, b: Team) => b.epa.current - a.epa.current);
+		predictor.rankings = data.teams.sort((a: Team, b: Team) => b.epa.unitless - a.epa.unitless);
 	}, [data]);
 
 	if (!data)
@@ -52,7 +52,7 @@ const QualificationRankingPage = observer(({}) => {
 				<List>
 					{rankings.map((team, index) => (
 						<SortableItem key={team.team_number} id={team.team_number}>
-							{index + 1}. {team.name} #{team.team_number} (EPA: {team.epa.current})
+							{index + 1}. {team.name} #{team.team_number} (EPA: {team.epa.unitless})
 						</SortableItem>
 					))}
 				</List>

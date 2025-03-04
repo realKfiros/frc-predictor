@@ -5,25 +5,21 @@ interface RequestParams {
 	params: Promise<{eventId: string}>
 }
 
-export const GET = async (_: Request, {params}: RequestParams) =>
-{
+export const GET = async (_: Request, {params}: RequestParams) => {
 	const {eventId} = await params;
 
 	const event = await Statbotics(`event/${eventId}`);
-
-	// Fetch teams from TBA
 	const tbaData = await TBA(`event/${eventId}/teams/simple`);
 
-	// Fetch data for each team from Statbotics
 	const combinedTeams = await Promise.all(
 		tbaData.map(async (tbaTeam: any) => {
 			try {
-				const statboticsData = await Statbotics(`team/${tbaTeam.team_number}`);
+				const teamEventData = await Statbotics(`team_event/${tbaTeam.team_number}/${eventId}`);
 
 				return {
 					team_number: tbaTeam.team_number,
 					name: tbaTeam.nickname || 'Unknown', // Fallback to 'Unknown' if TBA name is missing
-					epa: statboticsData.norm_epa
+					epa: teamEventData.epa,
 				};
 			} catch (error) {
 				console.error(`Failed to fetch data for team ${tbaTeam.team_number}:`, error);
