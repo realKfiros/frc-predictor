@@ -1,11 +1,13 @@
-import {action, autorun, makeObservable, observable} from "mobx";
+import {action, autorun, makeObservable, observable, toJS} from "mobx";
 import {Team} from "@/interfaces/team";
+import {AllianceSelectionState} from "@/interfaces/allaince_selection_state";
 
-class Predictor
-{
+class Predictor {
 	teams: Team[] = [];
 	rankings: Team[] = [];
 	alliances: Team[][] = Array(8).fill([]);
+	history: AllianceSelectionState[] = [];
+
 	pickIndex = 0;
 
 	isSelectingAlliances = false;
@@ -16,11 +18,14 @@ class Predictor
 			teams: observable,
 			rankings: observable,
 			alliances: observable,
+			history: observable.shallow,
 			pickIndex: observable,
 			isSelectingAlliances: observable,
 			initializedSelection: observable,
+			addToHistory: action.bound,
 			initializeSelection: action.bound,
-			pickTeam: action.bound
+			pickTeam: action.bound,
+			undo: action.bound
 		});
 
 		autorun(() => {
@@ -35,11 +40,23 @@ class Predictor
 
 		this.pickTeam(this.rankings[0], true);
 		this.initializedSelection = true;
+		this.addToHistory();
+	}
+
+	addToHistory() {
+		this.history.push({
+			rankings: toJS(this.rankings),
+			alliances: toJS(this.alliances),
+			pickIndex: this.pickIndex
+		});
 	}
 
 	pickTeam(team: Team, autoAssign = false) {
 		if (this.pickIndex > 23)
 			return;
+
+		if (!autoAssign)
+			this.addToHistory();
 
 		this.rankings = this.rankings.filter((t) => t.team_number !== team.team_number);
 
@@ -63,6 +80,18 @@ class Predictor
 				this.pickIndex++;
 				this.pickTeam(this.rankings[0], true);
 			}
+		}
+	}
+
+	undo() {
+		if (this.history.length === 0)
+			return;
+
+		const lastState = this.history.pop();
+		if (lastState) {
+			this.rankings = lastState.rankings;
+			this.alliances = lastState.alliances;
+			this.pickIndex = lastState.pickIndex;
 		}
 	}
 }
